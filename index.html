@@ -120,22 +120,25 @@
                 const result = `Successfully converted '${file.name}' to executable for GitHub user '${githubUsername}'.\n`;
                 displayOutput(result);
 
-                // Provide download link (replace with actual download logic)
-                const downloadLink = document.createElement('a');
-                downloadLink.href = '#'; // Replace with actual download link
-                downloadLink.download = 'generated_executable.exe';
-                downloadLink.textContent = 'Download Executable';
-                output.appendChild(downloadLink);
+                // Simulate creating the GitHub repository structure
+                simulateGitHubStructure(githubUsername);
             } catch (error) {
                 displayOutput('Conversion failed. Please try again.');
                 console.error('Conversion error:', error);
             }
         }
 
+        // Function to simulate creating GitHub repository structure
+        function simulateGitHubStructure(username) {
+            const outputDiv = document.getElementById('output');
+            const message = `Created 'executables/${username}' folder on GitHub.`;
+            outputDiv.innerHTML += `<br>${message}`;
+        }
+
         // Function to display output messages
         function displayOutput(output) {
             const outputDiv = document.getElementById('output');
-            outputDiv.textContent = output;
+            outputDiv.innerHTML += `<br>${output}`;
         }
 
         // Helper function to simulate async operations
