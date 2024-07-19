@@ -4,44 +4,18 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Python to Executable Converter</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             margin: 0;
-            padding: 0;
-            background-color: #f1f1f1;
-            color: #333;
+            padding: 20px;
         }
         .container {
-            max-width: 900px;
+            max-width: 800px;
             margin: 0 auto;
+            background-color: #f9f9f9;
             padding: 20px;
-            background-color: #fff;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
             border-radius: 5px;
-            margin-top: 20px;
-        }
-        header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 1px solid #ccc;
-            padding-bottom: 10px;
-            margin-bottom: 20px;
-        }
-        header h1 {
-            font-size: 2.5em;
-            margin: 0;
-            font-weight: bold;
-        }
-        header img {
-            height: 80px;
-            width: auto;
-        }
-        form {
-            text-align: center;
-            margin-bottom: 20px;
         }
         .button {
             background-color: #007bff;
@@ -61,49 +35,21 @@
             background-color: #0056b3;
         }
         .output {
-            background-color: #f9f9f9;
-            padding: 20px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
             margin-top: 20px;
             white-space: pre-wrap;
             overflow-wrap: break-word;
-        }
-        .output-title {
-            font-size: 1.5em;
-            font-weight: bold;
-            margin-bottom: 10px;
-        }
-        .output-content {
-            font-family: 'Courier New', Courier, monospace;
-        }
-        .terms {
-            font-size: 0.9em;
-            margin-top: 20px;
-            line-height: 1.6;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <header>
-            <img src="https://www.python.org/static/community_logos/python-logo-master-v3-TM.png" alt="Python Logo">
-            <h1>Python to Executable Converter</h1>
-        </header>
-        <div class="terms">
-            <h2>Terms of Service</h2>
-            <p>This service is provided for legitimate purposes only. You agree not to use this tool for creating or distributing malware, malicious software, or any illegal activities. By using this tool, you agree to comply with all applicable laws and GitHub's terms of service.</p>
-        </div>
+        <h1>Python to Executable Converter</h1>
         <form id="uploadForm" enctype="multipart/form-data">
             <label for="scriptFile" class="button">Select Python Script</label>
             <input type="file" id="scriptFile" name="scriptFile" accept=".py" style="display:none;">
             <button type="button" class="button" onclick="convertToExecutable()">Convert to Executable</button>
         </form>
-        <div id="output" class="output">
-            <div class="output-title">Conversion Output:</div>
-            <pre id="outputContent" class="output-content"></pre>
-            <a id="downloadLink" href="#" style="display: none;" class="button">Download Executable</a>
-        </div>
+        <div id="output" class="output"></div>
     </div>
 
     <script>
@@ -121,42 +67,32 @@
                 return;
             }
 
-            const reader = new FileReader();
-            reader.onload = async function(event) {
-                const pythonScript = event.target.result;
+            try {
+                displayOutput('Uploading script and converting to executable...');
 
-                try {
-                    // Simulate PyInstaller execution using a timeout (replace with actual backend processing)
-                    displayOutput('Converting script to executable...');
-                    await sleep(2000);  // Simulate processing delay
+                const formData = new FormData();
+                formData.append('scriptFile', file);
 
-                    // Example conversion result
-                    const result = `Successfully converted '${file.name}' to executable.\n`;
-                    displayOutput(result);
+                const response = await fetch('/convert', {
+                    method: 'POST',
+                    body: formData
+                });
 
-                    // Example: Provide a download link to the GitHub repository folder
-                    const downloadLink = document.getElementById('downloadLink');
-                    const repositoryUrl = 'https://github.com/PyToExe/pytoexe.github.com'; // Replace with your repository URL
-                    const folderPath = 'executables'; // Replace with the folder where you store executables
-                    downloadLink.href = `${repositoryUrl}/tree/main/${folderPath}`;
-                    downloadLink.textContent = 'Download Executables';
-                    downloadLink.style.display = 'block';
-                } catch (error) {
-                    displayOutput('Conversion failed. Please try again.');
-                    console.error('Conversion error:', error);
+                if (!response.ok) {
+                    throw new Error('Conversion failed.');
                 }
-            };
 
-            reader.readAsText(file);
+                const result = await response.text();
+                displayOutput(result);
+            } catch (error) {
+                displayOutput('Conversion failed. Please try again.');
+                console.error('Conversion error:', error);
+            }
         }
 
         function displayOutput(output) {
-            const outputContent = document.getElementById('outputContent');
-            outputContent.textContent = output;
-        }
-
-        function sleep(ms) {
-            return new Promise(resolve => setTimeout(resolve, ms));
+            const outputDiv = document.getElementById('output');
+            outputDiv.innerHTML = output;
         }
     </script>
 </body>
