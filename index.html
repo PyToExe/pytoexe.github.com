@@ -25,6 +25,21 @@
             margin-top: 0;
             font-weight: bold;
         }
+        .input-group {
+            margin-bottom: 20px;
+        }
+        .input-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        .input-group input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
+        }
         .button {
             background-color: #007bff;
             color: white;
@@ -55,18 +70,35 @@
 <body>
     <div class="container">
         <h1>Python to Executable Converter</h1>
+
+        <!-- GitHub Username Input -->
+        <div class="input-group">
+            <label for="githubUsername">GitHub Username:</label>
+            <input type="text" id="githubUsername" name="githubUsername" placeholder="Enter your GitHub username">
+        </div>
+
+        <!-- File Upload Form -->
         <form id="uploadForm" enctype="multipart/form-data">
             <label for="scriptFile" class="button">Select Python Script</label>
             <input type="file" id="scriptFile" name="scriptFile" accept=".py" style="display:none;">
             <button type="button" class="button" onclick="convertToExecutable()">Convert to Executable</button>
         </form>
+
+        <!-- Output Display -->
         <div id="output" class="output"></div>
     </div>
 
     <script>
+        // Function to handle file upload and conversion
         async function convertToExecutable() {
+            const githubUsername = document.getElementById('githubUsername').value.trim();
             const fileInput = document.getElementById('scriptFile');
             const file = fileInput.files[0];
+
+            if (!githubUsername) {
+                displayOutput('Please enter your GitHub username.');
+                return;
+            }
 
             if (!file) {
                 displayOutput('No file selected.');
@@ -81,16 +113,16 @@
             try {
                 displayOutput('Converting script to executable...');
 
-                // Simulate PyInstaller execution using a timeout (replace with actual backend processing)
-                await sleep(2000);  // Simulate processing delay
+                // Simulate conversion process (replace with actual conversion logic)
+                await sleep(2000); // Simulate processing delay
 
                 // Example conversion result
-                const result = `Successfully converted '${file.name}' to executable.\n`;
+                const result = `Successfully converted '${file.name}' to executable for GitHub user '${githubUsername}'.\n`;
                 displayOutput(result);
 
-                // Provide a download link to the generated executable
+                // Provide download link (replace with actual download logic)
                 const downloadLink = document.createElement('a');
-                downloadLink.href = 'path/to/generated/executable.exe';  // Replace with actual path
+                downloadLink.href = '#'; // Replace with actual download link
                 downloadLink.download = 'generated_executable.exe';
                 downloadLink.textContent = 'Download Executable';
                 output.appendChild(downloadLink);
@@ -100,11 +132,13 @@
             }
         }
 
+        // Function to display output messages
         function displayOutput(output) {
             const outputDiv = document.getElementById('output');
             outputDiv.textContent = output;
         }
 
+        // Helper function to simulate async operations
         function sleep(ms) {
             return new Promise(resolve => setTimeout(resolve, ms));
         }
